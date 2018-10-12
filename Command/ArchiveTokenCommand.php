@@ -2,7 +2,7 @@
 
 namespace Yokai\SecurityTokenBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -11,8 +11,19 @@ use Yokai\SecurityTokenBundle\Archive\ArchivistInterface;
 /**
  * @author Yann Eugoné <eugone.yann@gmail.com>
  */
-class ArchiveTokenCommand extends ContainerAwareCommand
+class ArchiveTokenCommand extends Command
 {
+    /**
+     * @var ArchivistInterface
+     */
+    private $archivist;
+
+    public function __construct(ArchivistInterface $archivist)
+    {
+        $this->archivist = $archivist;
+        parent::__construct();
+    }
+
     /**
      * @inheritDoc
      */
@@ -31,10 +42,7 @@ class ArchiveTokenCommand extends ContainerAwareCommand
     {
         $purpose = $input->getOption('purpose');
 
-        /** @var $archivist ArchivistInterface */
-        $archivist = $this->getContainer()->get('yokai_security_token.archivist');
-
-        $count = $archivist->archive($purpose);
+        $count = $this->archivist->archive($purpose);
 
         $output->writeln(
             sprintf('<info>Successfully archived <comment>%d</comment> security token(s).</info>', $count)
