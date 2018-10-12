@@ -21,7 +21,6 @@ class ArchiveTokenCommand extends ContainerAwareCommand
         $this
             ->setName('yokai:security-token:archive')
             ->addOption('purpose', null, InputOption::VALUE_OPTIONAL, 'Filter tokens to archive on purpose.')
-            ->addOption('before',  null, InputOption::VALUE_OPTIONAL, '[deprecated] Filter tokens to archive on created date.')
         ;
     }
 
@@ -31,13 +30,6 @@ class ArchiveTokenCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $purpose = $input->getOption('purpose');
-
-        if ($input->getOption('before')) {
-            @trigger_error(
-                'The "before" option is deprecated since version 2.2 and will be removed in 3.0.',
-                E_USER_DEPRECATED
-            );
-        }
 
         /** @var $archivist ArchivistInterface */
         $archivist = $this->getContainer()->get('yokai_security_token.archivist');
