@@ -35,12 +35,12 @@ class ChainUserManagerTest extends TestCase
 
         $manager->supportsClass(UserEntity::class)
             ->willReturn(true);
-        $manager->supportsClass(UserDocument::class)
+        $manager->supportsClass(Argument::not(UserEntity::class))
             ->willReturn(false);
 
         $manager->supportsUser(Argument::type(UserEntity::class))
             ->willReturn(true);
-        $manager->supportsUser(Argument::type(UserDocument::class))
+        $manager->supportsUser(Argument::not(Argument::type(UserEntity::class)))
             ->willReturn(false);
 
         $manager->getClass(Argument::type(UserEntity::class))
@@ -49,7 +49,7 @@ class ChainUserManagerTest extends TestCase
         $manager->getId(Argument::type(UserEntity::class))
             ->willReturn('increment');
 
-        $manager->get(UserEntity::class, Argument::type('int'))
+        $manager->get(UserEntity::class, Argument::type('string'))
             ->willReturn(new UserEntity());
 
         return $manager->reveal();
@@ -63,12 +63,12 @@ class ChainUserManagerTest extends TestCase
         /** @var UserManagerInterface|ObjectProphecy $manager */
         $manager = $this->prophesize(UserManagerInterface::class);
 
-        $manager->supportsClass(UserEntity::class)
+        $manager->supportsClass(Argument::not(UserDocument::class))
             ->willReturn(false);
         $manager->supportsClass(UserDocument::class)
             ->willReturn(true);
 
-        $manager->supportsUser(Argument::type(UserEntity::class))
+        $manager->supportsUser(Argument::not(Argument::type(UserDocument::class)))
             ->willReturn(false);
         $manager->supportsUser(Argument::type(UserDocument::class))
             ->willReturn(true);
@@ -179,7 +179,7 @@ class ChainUserManagerTest extends TestCase
 
     /**
      * @test
-     * @expectedException \RuntimeException
+     * @expectedException \InvalidArgumentException
      */
     public function it_throw_exception_on_get_user_class_without_appropriate_manager()
     {
@@ -189,7 +189,7 @@ class ChainUserManagerTest extends TestCase
 
     /**
      * @test
-     * @expectedException \RuntimeException
+     * @expectedException \InvalidArgumentException
      */
     public function it_throw_exception_on_get_user_id_without_appropriate_manager()
     {
@@ -199,7 +199,7 @@ class ChainUserManagerTest extends TestCase
 
     /**
      * @test
-     * @expectedException \RuntimeException
+     * @expectedException \InvalidArgumentException
      */
     public function it_throw_exception_on_get_user_without_appropriate_manager()
     {
